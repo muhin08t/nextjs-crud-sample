@@ -1,15 +1,21 @@
 'use client';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState('');
+  const router = useRouter();
 
+  const handleUpdate = async (product) => {
+    const query = new URLSearchParams(product).toString();
+    router.push(`/update?${query}`);
+  }
   const handleDelete = async (id) => {
     try {
-      // Send DELETE request to the API
       const res = await fetch(`https://crud.teamrabbil.com/api/v1/DeleteProduct/${id}`, {
       });
       const json = await res.json();
@@ -71,7 +77,7 @@ export default function Page() {
               PRODUCT
             </th>
             <th className="py-2 px-4 border border-gray-200">UNIT PRICE</th>
-            <th className="py-2 px-4 border border-gray-200">QTY</th>
+            <th className="py-2 px-4 border border-gray-200">Quantity</th>
             <th className="py-2 px-4 border border-gray-200">TOTAL PRICE</th>
             <th className="py-2 px-4 border border-gray-200">Action</th>
           </tr>
@@ -85,7 +91,7 @@ export default function Page() {
                     <Image
                       src={product.Img}
                       alt="Product Image"
-                      className='rounded-lg'
+                      className="rounded-lg"
                       width={50}
                       height={50}
                     />
@@ -105,12 +111,19 @@ export default function Page() {
                 {product.TotalPrice}
               </td>
               <td className="py-2 px-4 border border-gray-200 text-center">
-                <button onClick={() => handleDelete(product._id)} className="bg-red-500 text-white py-1 px-3 rounded-md mr-2">
+                <button
+                  onClick={() => handleDelete(product._id)}
+                  className="bg-red-500 text-white py-1 px-3 rounded-md mr-2"
+                >
                   🗑
                 </button>
-                <button className="bg-green-500 text-white py-1 px-3 rounded-md">
+                <button
+                  onClick={() => handleUpdate(product)}
+                  className="bg-green-500 text-white py-1 px-3 rounded-md"
+                >
                   ✏️
                 </button>
+
               </td>
             </tr>
           ))}

@@ -2,19 +2,19 @@
 
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
-export default function Home() {
+export default function Page() {
   const [successMessage, setSuccessMessage] = useState('');
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const name = searchParams.get('ProductName');
-  console.log("product name value "+name);
   const [formData, setFormData] = useState({
-    Img: '',
-    ProductCode: '',
-    ProductName: '',
-    Qty: '',
-    TotalPrice: '',
-    UnitPrice: ''
+    Img: searchParams.get('Img'),
+    ProductCode: searchParams.get('ProductCode'),
+    ProductName: searchParams.get('ProductName'),
+    Qty: searchParams.get('Qty'),
+    TotalPrice: searchParams.get('TotalPrice'),
+    UnitPrice: searchParams.get('UnitPrice')
   });
 
   const handleChange = (e) => {
@@ -26,7 +26,7 @@ export default function Home() {
     e.preventDefault();
 
     try {
-      const response = await fetch('https://crud.teamrabbil.com/api/v1/CreateProduct', {
+      const response = await fetch(`https://crud.teamrabbil.com/api/v1/UpdateProduct/${searchParams.get('_id')}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,11 +35,12 @@ export default function Home() {
       });
 
       if (response.ok) {
-        console.log('Product created successfully');
-        setSuccessMessage('Product created successfully!');
+        console.log('Product updated successfully');
+        setSuccessMessage('Product updated successfully!');
         setTimeout(() => {
           setSuccessMessage('');
-        }, 3000);
+          router.push(`/products`);
+        }, 2000);
         // Optionally reset form or show a success message
         setFormData({
           Img: '',
@@ -67,7 +68,7 @@ export default function Home() {
 
   return (
     <div className="max-w-3xl mt-5 mx-auto p-6 bg-white shadow-md rounded-md">
-      <h1 className="text-2xl font-bold mb-4">Create Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Update Product</h1>
             {/* Success Alert */}
             {successMessage && (
         <div className="mb-4 p-4 text-green-800 bg-green-100 border border-green-200 rounded-md">
@@ -146,7 +147,7 @@ export default function Home() {
           type="submit"
           className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700"
         >
-          Save
+          Update
         </button>
       </form>
     </div>
